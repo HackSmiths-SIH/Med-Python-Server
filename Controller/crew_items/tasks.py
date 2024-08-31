@@ -2,8 +2,8 @@ from crewai import Task, Agent
 from crewai.tasks.task_output import TaskOutput
 from crewai.crews.crew_output import CrewOutput
 from textwrap import dedent
-from job_manager import append_event
-from models import PositionInfo
+from utils.job_manager import append_event
+from utils.models import PositionInfo
 import logging
 
 

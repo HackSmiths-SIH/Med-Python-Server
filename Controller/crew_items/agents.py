@@ -2,7 +2,7 @@ from typing import List
 from crewai import Agent
 from crewai_tools import SerperDevTool
 from dotenv import load_dotenv
-from tools import (
+from utils.tools import (
     tool, 
     arxiv_search, 
     pubmed_search, 
@@ -11,7 +11,7 @@ from tools import (
     duck_search, 
     tavily_search
 )
-from langchain_google_genai import ChatGoogleGenerativeAI
+from utils.config_model import gemini
 import os
 
 load_dotenv()
@@ -25,15 +25,8 @@ class MedicalResearchAgents:
         self.arxivSearchTool = arxiv_search
         self.duckSearchTool = duck_search
         self.tavilySearchTool = tavily_search
-        
         # Initialize the LLM with proper API key
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
-            verbose=True,
-            temperature=0.6,
-            max_tokens=200,
-            google_api_key=os.getenv("GOOGLE_API_KEY")
-        )
+        self.llm = gemini()
 
     def research_manager(self, question: str) -> Agent:
         return Agent(
