@@ -50,7 +50,7 @@ def arxiv_search(search_query: str):
 
 
 #### Tool 4
-# Pubmed Tavily tool
+# Create Pubmed tool
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
 pubmedtool = PubmedQueryRun()
 @tool('PubmedSearch')

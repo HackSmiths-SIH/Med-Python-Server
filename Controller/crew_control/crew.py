@@ -1,7 +1,7 @@
 from Controller.crew_items.agents import MedicalResearchAgents
 from Controller.crew_items.tasks import MedicalResearchTasks
 from crewai import Crew
-from utils.config_model import gemini
+from utils.config_model import gemini,openai
 
 from utils.job_manager import append_event
 

@@ -11,7 +11,7 @@ from utils.tools import (
     duck_search, 
     tavily_search
 )
-from utils.config_model import gemini
+from utils.config_model import gemini,openai
 import os
 
 load_dotenv()
@@ -50,14 +50,23 @@ class MedicalResearchAgents:
                 - Make sure you attach all the relevant links and references 
                 - Start the references section by "Here are relevant references for further reading: "
                 """,
-            backstory="""As a Medical Head Assistant, you are responsible for aggregating all the searched information
-                into a well formed response/answer with the relevant information and references present.""",
+            backstory="""
+            As a Medical Head Assistant, you are responsible for aggregating all the searched information
+                into a well formed response/answer with the relevant information and references present.
+                Important:
+                - Once you've found the information, immediately stop searching for additional information.
+                """,
             llm=self.llm,
             tools=[
                 self.searchInternetTool, self.tavilySearchTool, self.pubmedSearchTool, 
                 self.semanticSearchTool, self.arxivSearchTool, self.duckSearchTool
             ],
             verbose=True,
+            memory=True,
+            guardrails={
+                'max_retries': 3,  # Limit the number of retries for the same action
+                'alternative_strategy': 'Ask for more context or delegate',  # Suggest alternatives
+            },
             allow_delegation=True
         )
 
@@ -88,5 +97,10 @@ class MedicalResearchAgents:
                 self.semanticSearchTool, self.arxivSearchTool, self.duckSearchTool
             ],
             llm=self.llm,
-            verbose=True
+            verbose=True,
+            memory=True,
+            guardrails={
+                'max_retries': 3, 
+                'alternative_strategy': 'Ask for more context or delegate',  
+            },
         )

@@ -1,9 +1,9 @@
-# Standard library imports
+# Standard imports
 import json
 from threading import Thread
 from crewai.crews.crew_output import CrewOutput
 from uuid import uuid4
-# Related third-party imports
+# Third-party imports
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -15,6 +15,8 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+
 
 @app.route('/api/crew', methods=['POST'])
 def run_crew():
@@ -61,6 +63,11 @@ def get_status(job_id):
         "result": result_json,
         "events": [{"timestamp": event.timestamp.isoformat(), "data": event.data} for event in job.events]
     })
+
+
+@app.route('/api', methods=['GET'])
+def test():
+    return jsonify({"message":"working" }), 202
 
 if __name__ == '__main__':
     app.run(debug=True, port=3001)
