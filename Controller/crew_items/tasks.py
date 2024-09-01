@@ -2,8 +2,8 @@ from crewai import Task, Agent
 from crewai.tasks.task_output import TaskOutput
 from crewai.crews.crew_output import CrewOutput
 from textwrap import dedent
-from job_manager import append_event
-from models import PositionInfo
+from utils.job_manager import append_event
+from utils.models import PositionInfo
 import logging
 
 
@@ -35,6 +35,7 @@ class MedicalResearchTasks:
             "Example JSON Object:\n"
             """{"answer": "Mpox is a viral disease caused by the mpox virus, spread through contact with infected people or animals. It is endemic in Central and West Africa but has been reported globally, including the US and Europe. Symptoms include rash, fever, headache, muscle aches, back pain, and fatigue. The rash can be painful and spread to the face, palms, soles, and genitals. While there's no cure, treatments manage symptoms. Prevention involves avoiding contact with infected individuals and animals. If traveling to mpox-affected areas, consult a doctor about vaccination. The CDC provides more information at https://www.cdc.gov/poxvirus/mpox/index.html.", "references": [{"name": "Centers for Disease Control and Prevention (CDC)", 'url': "https://www.cdc.gov/poxvirus/mpox/index.html"}]}\n\n"""
             "Important:\n"
+            "- Once you've found the information, immediately stop searching for additional information."
             "- 'Response tone should be that of a nurse, or a friendly doctor'\n"
             "- The final JSON object must include the answer in 'answer' section, and the relevant references in the 'references' section for user to refer to. Ensure that it is in this format.\n"
             "- The references in the 'references' section should be a list of named URLs\n"

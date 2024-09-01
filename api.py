@@ -1,47 +1,22 @@
-# Standard library imports
-from datetime import datetime
+# Standard imports
 import json
 from threading import Thread
 from crewai.crews.crew_output import CrewOutput
 from uuid import uuid4
-
-# Related third-party imports
+# Third-party imports
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from dotenv import load_dotenv
-
 # Local application/library specific imports
-from crew import MedicalResearchCrew
-from job_manager import append_event, jobs, jobs_lock, Event
+from utils.job_manager import  jobs, jobs_lock
+from Controller.crew_control.kickoff_crew import kickoff_crew
 import logging
-
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-def kickoff_crew(job_id: str, question: str):
-    logging.info(f"Crew for job {job_id} is starting")
 
-    results = None
-    try:
-        medical_research_crew = MedicalResearchCrew(job_id)
-        medical_research_crew.setup_crew(question)
-        results = medical_research_crew.kickoff()
-        logging.info(f"Crew for job {job_id} is complete")
-
-    except Exception as e:
-        logging.error(f"Error in kickoff_crew for job {job_id}: {e}")
-        append_event(job_id, f"An error occurred: {e}")
-        with jobs_lock:
-            jobs[job_id].status = 'ERROR'
-            jobs[job_id].result = str(e)
-
-    with jobs_lock:
-        jobs[job_id].status = 'COMPLETE'
-        jobs[job_id].result = results
-        jobs[job_id].events.append(
-            Event(timestamp=datetime.now(), data="Crew complete"))
 
 @app.route('/api/crew', methods=['POST'])
 def run_crew():
@@ -59,6 +34,7 @@ def run_crew():
 
     return jsonify({"job_id": job_id}), 202
 
+#Returns Status/Results of each subprocess (Job)
 @app.route('/api/crew/<job_id>', methods=['GET'])
 def get_status(job_id):
     with jobs_lock:
@@ -87,6 +63,11 @@ def get_status(job_id):
         "result": result_json,
         "events": [{"timestamp": event.timestamp.isoformat(), "data": event.data} for event in job.events]
     })
+
+
+@app.route('/api', methods=['GET'])
+def test():
+    return jsonify({"message":"working" }), 202
 
 if __name__ == '__main__':
     app.run(debug=True, port=3001)
